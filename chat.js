@@ -1,40 +1,50 @@
+document.getElementById("sendButton").addEventListener("click", sendMessage);
+document.getElementById("userInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") sendMessage();
+});
+
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
   if (!text) return;
 
-  const chat = document.getElementById("chat");
+  const chatBox = document.getElementById("chatBox");
 
-  const userMsg = document.createElement("div");
-  userMsg.className = "message user";
-  userMsg.textContent = text;
-  chat.appendChild(userMsg);
+  // ユーザーメッセージ表示
+  chatBox.innerHTML += "👤: " + text + "\n";
 
-  const botMsg = document.createElement("div");
-  botMsg.className = "message bot";
-  botMsg.textContent = "考え中...";
-  chat.appendChild(botMsg);
+  // AI応答プレースホルダー
+  chatBox.innerHTML += "🤖: 考え中...\n";
+
+  // 最新のボットメッセージ箇所を取得
+  const messages = chatBox.innerHTML.split("\n");
+  const botIndex = messages.lastIndexOf("🤖: 考え中...");
 
   try {
-    const response = await fetch("https://aiap-pwa.onrender.com/chat", {
+    const response = await fetch("https://aiap-proxy.onrender.com/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message: text })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
     });
 
-    const data = await response.json();
-    if (data.reply) {
-      botMsg.textContent = data.reply;
-    } else {
-      botMsg.textContent = "エラーが発生しました。";
-      console.error(data.error);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  } catch (err) {
-    botMsg.textContent = "通信エラーが発生しました。";
-    console.error(err);
+
+    const data = await response.json();
+    const reply = data.reply || "エラー: 返答がありません";
+
+    messages[botIndex] = "🤖: " + reply;
+    chatBox.innerHTML = messages.join("\n");
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+  } catch (error) {
+    messages[botIndex] = "🤖: エラーが発生しました。";
+    chatBox.innerHTML = messages.join("\n");
+    chatBox.scrollTop = chatBox.scrollHeight;
+    console.error(error);
   }
 
   input.value = "";
+  input.focus();
 }
