@@ -1,50 +1,35 @@
-document.getElementById("sendButton").addEventListener("click", sendMessage);
-document.getElementById("userInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") sendMessage();
-});
-
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
   if (!text) return;
 
-  const chatBox = document.getElementById("chatBox");
+  const chat = document.getElementById("chat");
 
-  // ユーザーメッセージ表示
-  chatBox.innerHTML += "👤: " + text + "\n";
+  const userDiv = document.createElement("div");
+  userDiv.className = "msg user";
+  userDiv.textContent = "👤 明良: " + text;
+  chat.appendChild(userDiv);
 
-  // AI応答プレースホルダー
-  chatBox.innerHTML += "🤖: 考え中...\n";
-
-  // 最新のボットメッセージ箇所を取得
-  const messages = chatBox.innerHTML.split("\n");
-  const botIndex = messages.lastIndexOf("🤖: 考え中...");
+  const botDiv = document.createElement("div");
+  botDiv.className = "msg bot";
+  botDiv.textContent = "🤖 Zeus: 考え中...";
+  chat.appendChild(botDiv);
 
   try {
     const response = await fetch("https://aiap-proxy.onrender.com/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message: text })
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
     const data = await response.json();
-    const reply = data.reply || "エラー: 返答がありません";
-
-    messages[botIndex] = "🤖: " + reply;
-    chatBox.innerHTML = messages.join("\n");
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-  } catch (error) {
-    messages[botIndex] = "🤖: エラーが発生しました。";
-    chatBox.innerHTML = messages.join("\n");
-    chatBox.scrollTop = chatBox.scrollHeight;
-    console.error(error);
+    botDiv.textContent = "🤖 Zeus: " + data.reply;
+  } catch (err) {
+    botDiv.textContent = "🤖 Zeus: エラーが発生しました。";
+    console.error(err);
   }
 
   input.value = "";
-  input.focus();
 }

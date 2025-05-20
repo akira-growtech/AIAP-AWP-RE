@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AIアシスタント</title>
+  <title>AI Assistant - 明良さん専用</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; }
+    #chat { margin-bottom: 1em; }
+    .msg { margin: 0.5em 0; }
+    .user { color: blue; }
+    .bot { color: green; }
+  </style>
 </head>
 <body>
-  <h1>こんにちは、AIアシスタントです！</h1>
-
-  <div id="chatBox" style="white-space: pre-wrap; border:1px solid #ccc; padding:10px; height:300px; overflow-y:auto;"></div>
-  <input type="text" id="userInput" placeholder="メッセージを入力..." style="width:80%;" />
-  <button id="sendButton">送信</button>
+  <h1>明良さん専用AIアシスタント</h1>
+  <div id="chat"></div>
+  <input type="text" id="userInput" placeholder="メッセージを入力..." />
+  <button onclick="sendMessage()">送信</button>
 
   <script src="chat.js"></script>
 </body>
