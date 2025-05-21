@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Assistant App</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      padding: 1em;
+      max-width: 400px;
+      margin: auto;
+    }
+    .message {
+      margin: 0.5em 0;
+    }
+    .user { text-align: right; }
+    .bot { text-align: left; color: blue; }
+  </style>
+</head>
+<body>
+  <h1>こんにちは、AIアシスタントです！</h1>
+
+  <div id="chat">
+    <div class="message bot">ご用件をどうぞ。</div>
+  </div>
+
+  <input type="text" id="userInput" placeholder="メッセージを入力..." />
+  <button onclick="sendMessage()">送信</button>
+
+<script type="module">
+  import { OPENAI_API_KEY } from './config.js';
+
+  window.sendMessage = async function() {
+    const input = document.getElementById("userInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    const chat = document.getElementById("chat");
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.textContent = text;
+    chat.appendChild(userMsg);
+
+    const botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.textContent = "考え中...";
+    chat.appendChild(botMsg);
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + OPENAI_API_KEY
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "あなたは明良さん専用のAIアシスタントです。" },
+            { role: "user", content: text }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.choices[0].message.content;
+      botMsg.textContent = reply;
+    } catch (err) {
+      botMsg.textContent = "エラーが発生しました。";
+      console.error(err);
+    }
+
+    input.value = "";
+  };
+</script>
+
+  async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    const chat = document.getElementById("chat");
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.textContent = text;
+    chat.appendChild(userMsg);
+
+    // ChatGPT API呼び出し
+    const botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.textContent = "考え中...";
+    chat.appendChild(botMsg);
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer **APIきーをいれる**"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "あなたは明良さん専用のAIアシスタントです。" },
+            { role: "user", content: text }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.choices[0].message.content;
+      botMsg.textContent = reply;
+    } catch (err) {
+      botMsg.textContent = "エラーが発生しました。";
+      console.error(err);
+    }
+
+    input.value = "";
+  }
+</script>
