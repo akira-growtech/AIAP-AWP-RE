@@ -1,4 +1,4 @@
-const chatHistoryKey = "zeus_chat_history"; // localStorageキー名
+const chatHistoryKey = "zeus_chat_history"; // 履歴保存キー
 
 // 履歴読み込み
 function loadChatHistory() {
@@ -10,13 +10,13 @@ function saveChatHistory(history) {
   localStorage.setItem(chatHistoryKey, JSON.stringify(history));
 }
 
-// 履歴リセット（オプション）
+// 履歴リセット
 function clearChatHistory() {
   localStorage.removeItem(chatHistoryKey);
   document.getElementById("chat").innerHTML = "";
 }
 
-// チャット表示用
+// メッセージ表示
 function appendMessage(role, content) {
   const chat = document.getElementById("chat");
   const roleClass = role === "user" ? "user" : "bot";
@@ -24,7 +24,7 @@ function appendMessage(role, content) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// 送信関数（履歴対応）
+// メッセージ送信
 async function sendMessage() {
   console.log("✅ sendMessage 関数が呼び出された");
 
@@ -39,11 +39,10 @@ async function sendMessage() {
 
   input.value = "";
 
-  // 履歴読み込みと更新
+  // 履歴取得と更新
   const history = loadChatHistory();
   history.push({ role: "user", content: userMessage });
 
-  // APIに送るメッセージ（systemを最初に含める）
   const messages = [
     { role: "system", content: "あなたは親切なAIアシスタントのゼウスです。" },
     ...history
@@ -53,7 +52,7 @@ async function sendMessage() {
     const response = await fetch("https://aiap-pwa.onrender.com/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages }) // ← ここを変更
+      body: JSON.stringify({ messages }) // messages配列を送信
     });
 
     console.log("✅ fetch完了");
@@ -61,7 +60,7 @@ async function sendMessage() {
     const data = await response.json();
     const aiMessage = data.reply;
 
-    // ダミー消す（"ゼウス考え中..."）
+    // 考え中削除
     const botThinking = document.querySelectorAll(".msg.bot");
     if (botThinking.length > 0) {
       botThinking[botThinking.length - 1].remove();
@@ -77,7 +76,7 @@ async function sendMessage() {
   }
 }
 
-// ページ読み込み時に履歴表示
+// 履歴読み込み → 表示
 window.addEventListener("DOMContentLoaded", () => {
   const history = loadChatHistory();
   history.forEach(m => appendMessage(m.role, m.content));
