@@ -5,12 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI Assistant - grow-techの耳の方</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; }
-    #chat { margin-bottom: 1em; }
-    .msg { margin: 0.5em 0; }
-    .user { color: blue; }
-    .bot { color: green; }
-  </style>
+  body {
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: auto;
+    padding: 1em;
+  }
+
+  #chat {
+    margin-bottom: 1em;
+    border: 1px solid #ccc;
+    padding: 1em;
+    height: 400px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    border-radius: 10px;
+  }
+
+  .msg {
+    margin: 0.5em 0;
+  }
+
+  .user {
+    color: blue;
+  }
+
+  .bot {
+    color: green;
+  }
+
+  #userInput {
+    width: 100%;
+    padding: 1em;
+    font-size: 1.2em;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin-bottom: 0.5em;
+  }
+
+  button {
+    padding: 0.75em 1.5em;
+    font-size: 1em;
+    margin-right: 0.5em;
+    border-radius: 8px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+</style>
+
 </head>
 <body>
   <h1>ｇrow-tech専用AIアシスタント</h1>
