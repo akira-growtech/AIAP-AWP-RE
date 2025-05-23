@@ -1,73 +1,46 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Assistant - grow-techの耳の方</title>
-  <style>
-  body {
-    font-family: sans-serif;
-    max-width: 600px;
-    margin: auto;
-    padding: 1em;
-  }
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 
-  #chat {
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
-    padding: 1em;
-    height: 400px;
-    overflow-y: auto;
-    background: #f9f9f9;
-    border-radius: 10px;
-  }
+load_dotenv()
 
-  .msg {
-    margin: 0.5em 0;
-  }
+app = Flask(__name__)
 
-  .user {
-    color: blue;
-  }
+CORS(app,
+     resources={r"/chat": {"origins": "https://akira-growtech.github.io"}},
+     supports_credentials=True,
+     allow_headers=["Content-Type"],
+     methods=["GET", "POST", "OPTIONS"])
 
-  .bot {
-    color: green;
-  }
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-  #userInput {
-    width: 100%;
-    padding: 1em;
-    font-size: 1.2em;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    box-sizing: border-box;
-    margin-bottom: 0.5em;
-  }
+@app.route("/chat", methods=["POST", "OPTIONS"])
+def chat():
+    if request.method == "OPTIONS":
+        return '', 204
 
-  button {
-    padding: 0.75em 1.5em;
-    font-size: 1em;
-    margin-right: 0.5em;
-    border-radius: 8px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-  }
+    data = request.json
+    user_message = data.get("message", "")
 
-  button:hover {
-    background-color: #0056b3;
-  }
-</style>
+    if not user_message:
+        return jsonify({"reply": "メッセージが空です"}), 400
 
-</head>
-<body>
-  <h1>ｇrow-tech専用AIアシスタント</h1>
-  <div id="chat"></div>
-  <input type="text" id="userInput" placeholder="なによ...？" />
-  <button onclick="sendMessage()">送信</button>
-  <button onclick="clearChatHistory()">履歴リセット</button> <!-- 追加 -->
-  
-  <script src="chat.js"></script>
-</body>
-</html>
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "あなたは明良さん専用のAIアシスタントです。"},
+                {"role": "user", "content": user_message}
+            ]
+        )
+        reply_text = response.choices[0].message.content.strip()
+        return jsonify({"reply": reply_text})
+    except Exception as e:
+        print("❌ エラー発生:", str(e))
+        return jsonify({"reply": f"内部エラー: {str(e)}"}), 500
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
