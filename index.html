@@ -2,22 +2,80 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Assistant - grow-techの耳の方</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>growtech AI</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; }
-    #chat { margin-bottom: 1em; }
-    .msg { margin: 0.5em 0; }
-    .user { color: blue; }
-    .bot { color: green; }
+    body {
+      font-family: sans-serif;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #f9f9f9;
+    }
+    #chat-container {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #fff;
+      border-bottom: 1px solid #ccc;
+      font-size: 1.1rem;
+    }
+    #chat-container div {
+      margin: 0.5rem 0;
+      line-height: 1.4;
+    }
+    .user {
+      text-align: right;
+      color: #34495e;
+      font-weight: 600;
+    }
+    .ai {
+      text-align: left;
+      color: #27ae60;
+      font-weight: 600;
+    }
+    #input-container {
+      display: flex;
+      padding: 0.5rem 1rem;
+      background: #eee;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+    #message-input {
+      flex: 1;
+      min-height: 60px;
+      max-height: 120px;
+      padding: 0.5rem;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      border: 1px solid #bbb;
+      resize: vertical;
+      line-height: 1.3;
+    }
+    #send-button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1.2rem;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    #send-button:hover {
+      background: #1e8449;
+    }
   </style>
 </head>
 <body>
-  <h1>ｇrow-tech専用AIアシスタント</h1>
-  <div id="chat"></div>
-  <input type="text" id="userInput" placeholder="なによ...？" />
-  <button onclick="sendMessage()">送信</button>
+  <div id="chat-container"></div>
+  <div id="input-container">
+    <textarea id="message-input" placeholder="どうしたん...？"></textarea>
+    <button id="send-button">送信</button>
+  </div>
 
   <script src="chat.js"></script>
 </body>
 </html>
+
